@@ -1,1 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050b14">
+<title>JARVIS AI</title>
 
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #050b14;
+  color: #e8faff;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+:root {
+  --cyan: #00e5ff;
+  --blue: #008cff;
+  --panel: #0b1625;
+  --border: rgba(0,229,255,.25);
+}
+
+.app {
+  width: 100%;
+  max-width: 950px;
+  margin: auto;
+  padding: 16px;
+}
+
+/* HEADER */
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  color: var(--cyan);
+  font-size: 25px;
+  font-weight: bold;
+  letter-spacing: 4px;
+}
+
+.status {
+  font-size: 12px;
+  color: #78eaff;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* CORE */
+
+.core-section {
+  text-align: center;
+  padding: 35px 10px 25px;
+}
+
+.core {
+  width: 170px;
+  height: 170px;
+  margin: auto;
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0,229,255,.3),
+              inset 0 0 30px rgba(0,229,255,.15);
+}
+
+.core::before,
+.core::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--cyan);
+}
+
+.core::before {
+  width: 145px;
+  height: 145px;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  animation: spin 4s linear infinite;
+}
+
+.core::after {
+  width: 120px;
+  height: 120px;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin 3s linear infinite reverse;
+}
+
+.core svg {
+  width: 70px;
+  height: 70px;
+  color: var(--cyan);
+  filter: drop-shadow(0 0 10px var(--cyan));
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.listening .core {
+  box-shadow: 0 0 45px var(--cyan),
+              inset 0 0 35px rgba(0,229,255,.3);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  50% { transform: scale(1.04); }
+}
+
+h1 {
+  margin-top: 22px;
+  font-size: 28px;
+  letter-spacing: 5px;
+}
+
+.subtitle {
+  color: #7799aa;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+/* STATUS PANEL */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 16px;
+}
+
+.response {
+  min-height: 55px;
+  line-height: 1.6;
+  color: #c8f5ff;
+  word-wrap: break-word;
+}
+
+.small-status {
+  color: #6e98aa;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* COMMAND INPUT */
+
+.input-area {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  background: #08111e;
+  color: white;
+  outline: none;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 10px rgba(0,229,255,.15);
+}
+
+button {
+  background: #081a2b;
+  color: var(--cyan);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: .2s;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #103047;
+  border-color: var(--cyan);
+}
+
+button:active {
+  transform: scale(.97);
+}
+
+.primary {
+  background: #003d55;
+}
+
+.danger {
+  color: #ff647c;
+  border-color: rgba(255,100,124,.3);
+}
+
+/* QUICK COMMANDS */
+
+.section-title {
+  color: var(--cyan);
+  font-size: 14px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.quick-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.quick-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.quick-btn span {
+  font-size: 13px;
+}
+
+/* CHAT */
+
+.chat-box {
+  max-height: 350px;
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+.chat-message {
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.user-message {
+  background: #102b42;
+  border-left: 3px solid #008cff;
+}
+
+.jarvis-message {
+  background: #0c202b;
+  border-left: 3px solid var(--cyan);
+}
+
+.message-label {
+  font-size: 11px;
+  color: var(--cyan);
+  margin-bottom: 5px;
+}
+
+/* FOOTER */
+
+.footer {
+  text-align: center;
+  color: #587788;
+  font-size: 11px;
+  padding: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+@media(max-width:500px) {
+  .app {
+    padding: 10px;
+  }
+
+  .core {
+    width: 145px;
+    height: 145px;
+  }
+
+  .core::before {
+    width: 125px;
+    height: 125px;
+  }
+
+  .core::after {
+    width: 105px;
+    height: 105px;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+
+  .quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .input-area button {
+    padding: 10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app" id="app">
+
+<header>
+  <div class="logo">J.A.R.V.I.S.</div>
+
+  <div class="status">
+    <span class="status-dot"></span>
+    <span id="systemStatus">SYSTEM ONLINE</span>
+  </div>
+</header>
+
+<section class="core-section">
+
+  <div class="core" id="core">
+
+    <!-- REAL SVG CORE ICON -->
+
+    <svg viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="30"
+              stroke="currentColor" stroke-width="2"/>
+
+      <circle cx="50" cy="50" r="20"
+              stroke="currentColor" stroke-width="2"/>
+
+      <circle cx="50" cy="50" r="10"
+              fill="currentColor"/>
+
+      <path d="M50 5V20 M50 80V95
+               M5 50H20 M80 50H95"
+            stroke="currentColor" stroke-width="3"/>
+
+      <path d="M25 25L34 34 M66 66L75 75
+               M75 25L66 34 M34 66L25 75"
+            stroke="currentColor" stroke-width="2"/>
+    </svg>
+
+  </div>
+
+  <h1>JARVIS</h1>
+  <p class="subtitle">PERSONAL AI ASSISTANT</p>
+
+</section>
+
+<div class="panel">
+
+  <div class="section-title">SYSTEM RESPONSE</div>
+
+  <div id="response" class="response">
+    Hello! I am Jarvis. Your assistant is ready.
+    Enter a command or press Voice.
+  </div>
+
+  <div id="smallStatus" class="small-status">
+    Waiting for command...
+  </div>
+
+</div>
+
+<!-- INPUT -->
+
+<div class="input-area">
+
+  <input
+    type="text"
+    id="commandInput"
+    placeholder="Type your command..."
+    autocomplete="off"
+  >
+
+  <button class="primary" id="sendButton" title="Send">
+    <svg width="22" height="22" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor"
+         stroke-width="2">
+      <path d="M22 2L11 13"/>
+      <path d="M22 2L15 22L11 13L2 9Z"/>
+    </svg>
+  </button>
+
+</div>
+
+<div class="input-area">
+
+  <button id="voiceButton" class="primary" style="flex:1">
+    <svg width="20" height="20" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor"
+         stroke-width="2">
+      <rect x="9" y="2" width="6" height="12" rx="3"/>
+      <path d="M5 10V12A7 7 0 0019 12V10"/>
+      <path d="M12 19V22 M8 22H16"/>
+    </svg>
+    Voice
+  </button>
+
+  <button id="stopButton" class="danger" style="flex:1">
+    Stop Voice
+  </button>
+
+</div>
+
+<!-- QUICK COMMANDS -->
+
+<div class="panel">
+
+  <div class="section-title">QUICK COMMANDS</div>
+
+  <div class="quick-grid">
+
+    <button class="quick-btn" data-command="What is the time?">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6V12L16 14"/>
+      </svg>
+      <span>Time</span>
+    </button>
+
+    <button class="quick-btn" data-command="What is today's date?">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="17" rx="2"/>
+        <path d="M16 2V6 M8 2V6 M3 10H21"/>
+      </svg>
+      <span>Date</span>
+    </button>
+
+    <button class="quick-btn" data-command="Open Google">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M21 21L16.5 16.5"/>
+      </svg>
+      <span>Google</span>
+    </button>
+
+    <button class="quick-btn" data-command="Open YouTube">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <rect x="2" y="4" width="20" height="16" rx="4"/>
+        <path d="M10 8L16 12L10 16Z"/>
+      </svg>
+      <span>YouTube</span>
+    </button>
+
+    <button class="quick-btn" data-command="Open calculator">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <rect x="4" y="2" width="16" height="20" rx="2"/>
+        <path d="M8 6H16V10H8Z M8 14H9 M12 14H13
+                 M16 14H17 M8 18H9 M12 18H13 M16 18H17"/>
+      </svg>
+      <span>Calculator</span>
+    </button>
+
+    <button class="quick-btn" data-command="Weather">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="16" cy="8" r="4"/>
+        <path d="M16 1V3 M16 13V15 M9 8H7
+                 M21 8H23 M11 3L12 4
+                 M20 12L21 13"/>
+        <path d="M5 19H18A3 3 0 0018 13
+                 A5 5 0 005 15A2 2 0 005 19Z"/>
+      </svg>
+      <span>Weather</span>
+    </button>
+
+    <button class="quick-btn" data-command="My location">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="8"/>
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2V4 M12 20V22 M2 12H4 M20 12H22"/>
+      </svg>
+      <span>Location</span>
+    </button>
+
+    <button class="quick-btn" data-command="Tell me a joke">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 9H8.01 M16 9H16.01
+                 M8 14S10 17 16 14"/>
+      </svg>
+      <span>Joke</span>
+    </button>
+
+    <button class="quick-btn" data-command="Help">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9 9A3 3 0 0115 9C15 11 12 11 12 14
+                 M12 17H12.01"/>
+      </svg>
+      <span>Help</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- CHAT HISTORY -->
+
+<div class="panel">
+
+  <div class="section-title">CONVERSATION</div>
+
+  <div id="chatBox" class="chat-box"></div>
+
+  <button id="clearChat" class="danger"
+          style="width:100%;margin-top:10px">
+    Clear Conversation
+  </button>
+
+</div>
+
+<div class="footer">
+  JARVIS PERSONAL ASSISTANT · BROWSER EDITION
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   JARVIS SYSTEM
+========================= */
+
+const responseBox = document.getElementById("response");
+const statusBox = document.getElementById("smallStatus");
+const input = document.getElementById("commandInput");
+const chatBox = document.getElementById("chatBox");
+const core = document.getElementById("core");
+const app = document.getElementById("app");
+
+let recognition = null;
+let listening = false;
+let speaking = false;
+
+/* =========================
+   MEMORY
+========================= */
+
+let chatHistory = [];
+
+try {
+  chatHistory = JSON.parse(
+    localStorage.getItem("jarvis_history") || "[]"
+  );
+} catch {
+  chatHistory = [];
+}
+
+function saveHistory() {
+  try {
+    localStorage.setItem(
+      "jarvis_history",
+      JSON.stringify(chatHistory.slice(-60))
+    );
+  } catch {}
+}
+
+function addChat(type, text) {
+
+  chatHistory.push({
+    type,
+    text,
+    time: new Date().toISOString()
+  });
+
+  chatHistory = chatHistory.slice(-60);
+
+  saveHistory();
+  renderChat();
+}
+
+function renderChat() {
+
+  chatBox.innerHTML = "";
+
+  chatHistory.forEach(message => {
+
+    const div = document.createElement("div");
+
+    div.className =
+      "chat-message " +
+      (message.type === "user"
+        ? "user-message"
+        : "jarvis-message");
+
+    const label = document.createElement("div");
+    label.className = "message-label";
+    label.textContent =
+      message.type === "user" ? "YOU" : "JARVIS";
+
+    const content = document.createElement("div");
+    content.textContent = message.text;
+
+    div.appendChild(label);
+    div.appendChild(content);
+
+    chatBox.appendChild(div);
+
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+renderChat();
+
+/* =========================
+   RESPONSE
+========================= */
+
+function setStatus(text) {
+  statusBox.textContent = text;
+}
+
+function respond(text, speak = true) {
+
+  responseBox.textContent = text;
+  setStatus("Response ready");
+
+  addChat("jarvis", text);
+
+  if (speak) {
+    speakText(text);
+  }
+}
+
+/* =========================
+   TEXT TO SPEECH
+========================= */
+
+function speakText(text) {
+
+  if (!("speechSynthesis" in window)) {
+    setStatus("Voice response not supported");
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+
+  utterance.lang = "en-IN";
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  utterance.onstart = () => {
+    speaking = true;
+    setStatus("Jarvis is speaking...");
+  };
+
+  utterance.onend = () => {
+    speaking = false;
+    setStatus("Ready");
+  };
+
+  utterance.onerror = () => {
+    speaking = false;
+    setStatus("Voice response error");
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+  }
+
+  speaking = false;
+}
+
+/* =========================
+   TIME & DATE
+========================= */
+
+function getTime() {
+
+  return new Date().toLocaleTimeString(
+    "en-IN",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    }
+  );
+}
+
+function getDate() {
+
+  return new Date().toLocaleDateString(
+    "en-IN",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    }
+  );
+}
+
+/* =========================
+   CALCULATOR
+   Safe arithmetic parser
+========================= */
+
+function calculate(expression) {
+
+  expression = expression
+    .replace(/×/g, "*")
+    .replace(/÷/g, "/")
+    .replace(/,/g, "")
+    .replace(/\s/g, "");
+
+  if (!expression) {
+    throw new Error("No calculation provided.");
+  }
+
+  if (!/^[0-9+\-*/().%]+$/.test(expression)) {
+    throw new Error("Only basic arithmetic is supported.");
+  }
+
+  const tokens =
+    expression.match(/(?:\d+(?:\.\d*)?|\.\d+)|[+\-*/()%]/g);
+
+  let index = 0;
+
+  function parseExpression() {
+    return parseAddSub();
+  }
+
+  function parseAddSub() {
+
+    let value = parseMulDiv();
+
+    while (
+      tokens[index] === "+" ||
+      tokens[index] === "-"
+    ) {
+
+      const operator = tokens[index++];
+
+      const right = parseMulDiv();
+
+      value =
+        operator === "+"
+          ? value + right
+          : value - right;
+    }
+
+    return value;
+  }
+
+  function parseMulDiv() {
+
+    let value = parseUnary();
+
+    while (
+      tokens[index] === "*" ||
+      tokens[index] === "/" ||
+      tokens[index] === "%"
+    ) {
+
+      const operator = tokens[index++];
+
+      const right = parseUnary();
+
+      if (right === 0 &&
+          (operator === "/" || operator === "%")) {
+        throw new Error("Cannot divide by zero.");
+      }
+
+      if (operator === "*") value *= right;
+      if (operator === "/") value /= right;
+      if (operator === "%") value %= right;
+    }
+
+    return value;
+  }
+
+  function parseUnary() {
+
+    if (tokens[index] === "+") {
+      index++;
+      return parseUnary();
+    }
+
+    if (tokens[index] === "-") {
+      index++;
+      return -parseUnary();
+    }
+
+    return parsePrimary();
+  }
+
+  function parsePrimary() {
+
+    const token = tokens[index++];
+
+    if (token === "(") {
+
+      const value = parseExpression();
+
+      if (tokens[index] !== ")") {
+        throw new Error("Missing closing bracket.");
+      }
+
+      index++;
+
+      return value;
+    }
+
+    if (!token || !/^\d*\.?\d+$/.test(token)) {
+      throw new Error("Invalid calculation.");
+    }
+
+    return Number(token);
+  }
+
+  const result = parseExpression();
+
+  if (index !== tokens.length) {
+    throw new Error("Invalid calculation.");
+  }
+
+  if (!Number.isFinite(result)) {
+    throw new Error("Invalid result.");
+  }
+
+  return Number(result.toFixed(8));
+}
+
+/* =========================
+   OPEN WEBSITES
+========================= */
+
+function openWebsite(url, name) {
+
+  window.open(url, "_blank");
+
+  respond("Opening " + name + ".");
+}
+
+function googleSearch(query) {
+
+  const url =
+    "https://www.google.com/search?q=" +
+    encodeURIComponent(query);
+
+  window.open(url, "_blank");
+
+  respond("Searching Google for " + query);
+}
+
+/* =========================
+   WEATHER
+========================= */
+
+async function getWeather() {
+
+  respond("Checking your weather. Please allow location access if requested.", false);
+
+  setStatus("Getting location...");
+
+  if (!navigator.geolocation) {
+    respond("Location is not supported by this browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    async position => {
+
+      try {
+
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        const url =
+          "https://api.open-meteo.com/v1/forecast" +
+          "?latitude=" + lat +
+          "&longitude=" + lon +
+          "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m";
+
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error("Weather service unavailable.");
+        }
+
+        const data = await res.json();
+        const current = data.current;
+
+        const weatherText =
+          weatherDescription(current.weather_code);
+
+        const message =
+          "Current weather: " +
+          current.temperature_2m +
+          " degrees Celsius. " +
+          weatherText +
+          ". Feels like " +
+          current.apparent_temperature +
+          " degrees. Humidity " +
+          current.relative_humidity_2m +
+          " percent. Wind speed " +
+          current.wind_speed_10m +
+          " kilometres per hour.";
+
+        respond(message);
+
+      } catch (error) {
+
+        respond("Unable to retrieve weather right now.");
+
+      }
+
+    },
+
+    error => {
+
+      respond(
+        "I could not access your location. " +
+        "Please allow location permission in your browser."
+      );
+
+    },
+
+    {
+      enableHighAccuracy: false,
+      timeout: 15000,
+      maximumAge: 60000
+    }
+
+  );
+}
+
+function weatherDescription(code) {
+
+  if (code === 0) return "Clear sky";
+  if (code <= 3) return "Partly cloudy";
+  if (code <= 48) return "Foggy";
+  if (code <= 57) return "Drizzle";
+  if (code <= 67) return "Rain";
+  if (code <= 77) return "Snow";
+  if (code <= 82) return "Rain showers";
+  if (code <= 86) return "Snow showers";
+  if (code <= 99) return "Thunderstorm";
+
+  return "Unknown weather";
+}
+
+/* =========================
+   LOCATION
+========================= */
+
+function getLocation() {
+
+  if (!navigator.geolocation) {
+    respond("Location is not supported on this device.");
+    return;
+  }
+
+  respond("Requesting your location permission.", false);
+
+  navigator.geolocation.getCurrentPosition(
+
+    position => {
+
+      const c = position.coords;
+
+      const message =
+        "Your coordinates are: Latitude " +
+        c.latitude.toFixed(5) +
+        ", Longitude " +
+        c.longitude.toFixed(5) +
+        ". Accuracy approximately " +
+        Math.round(c.accuracy) +
+        " metres.";
+
+      respond(message);
+
+    },
+
+    error => {
+
+      respond("Location permission was not granted or location is unavailable.");
+
+    },
+
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+
+  );
+}
+
+/* =========================
+   REMINDERS
+========================= */
+
+function createReminder(command) {
+
+  const match = command.match(
+    /remind me in (\d+) (seconds?|minutes?|hours?) to (.+)/i
+  );
+
+  if (!match) {
+
+    respond(
+      "Try saying: Remind me in 5 minutes to study."
+    );
+
+    return;
+  }
+
+  const amount = Number(match[1]);
+  const unit = match[2].toLowerCase();
+  const task = match[3];
+
+  let milliseconds = amount * 1000;
+
+  if (unit.startsWith("minute")) {
+    milliseconds = amount * 60000;
+  }
+
+  if (unit.startsWith("hour")) {
+    milliseconds = amount * 3600000;
+  }
+
+  if (milliseconds > 2147483647) {
+
+    respond("That reminder is too far in the future for this browser session.");
+    return;
+
+  }
+
+  respond(
+    "Reminder set. I will remind you to " +
+    task +
+    " in " +
+    amount +
+    " " +
+    unit +
+    "."
+  );
+
+  setTimeout(() => {
+
+    const message = "Reminder: " + task;
+
+    respond(message);
+
+    if ("Notification" in window &&
+        Notification.permission === "granted") {
+
+      new Notification("JARVIS Reminder", {
+        body: task
+      });
+
+    }
+
+  }, milliseconds);
+
+}
+
+/* =========================
+   JOKES
+========================= */
+
+const jokes = [
+  "Why did the computer go to the doctor? Because it had a virus.",
+  "Why do programmers prefer dark mode? Because light attracts bugs.",
+  "I told my computer I needed a break. It said no problem and went to sleep.",
+  "Why was the keyboard tired? It had too many shifts."
+];
+
+function randomJoke() {
+
+  const joke =
+    jokes[Math.floor(Math.random() * jokes.length)];
+
+  respond(joke);
+}
+
+/* =========================
+   COMMAND SYSTEM
+========================= */
+
+function processCommand(rawCommand) {
+
+  const original = rawCommand.trim();
+
+  if (!original) return;
+
+  addChat("user", original);
+
+  input.value = "";
+
+  setStatus("Processing command...");
+
+  const command = original.toLowerCase();
+
+  /* GREETINGS */
+
+  if (
+    command === "hi" ||
+    command === "hello" ||
+    command.includes("hey jarvis")
+  ) {
+
+    respond("Hello! I am Jarvis. How can I help you?");
+    return;
+  }
+
+  /* IDENTITY */
+
+  if (
+    command.includes("who are you") ||
+    command.includes("your name")
+  ) {
+
+    respond(
+      "I am Jarvis, your browser-based personal assistant."
+    );
+
+    return;
+  }
+
+  /* TIME */
+
+  if (
+    command.includes("time") ||
+    command.includes("samay") ||
+    command.includes("kitne baje")
+  ) {
+
+    respond("The current time is " + getTime());
+    return;
+  }
+
+  /* DATE */
+
+  if (
+    command.includes("date") ||
+    command.includes("today") ||
+    command.includes("tarikh")
+  ) {
+
+    respond("Today is " + getDate());
+    return;
+  }
+
+  /* STOP */
+
+  if (
+    command.includes("stop speaking") ||
+    command === "stop voice" ||
+    command === "stop"
+  ) {
+
+    stopSpeaking();
+    setStatus("Voice stopped");
+    return;
+  }
+
+  /* WEATHER */
+
+  if (
+    command.includes("weather") ||
+    command.includes("mausam")
+  ) {
+
+    getWeather();
+    return;
+  }
+
+  /* LOCATION */
+
+  if (
+    command.includes("my location") ||
+    command.includes("where am i") ||
+    command.includes("location")
+  ) {
+
+    getLocation();
+    return;
+  }
+
+  /* REMINDER */
+
+  if (command.includes("remind me")) {
+
+    createReminder(original);
+    return;
+  }
+
+  /* CALCULATOR */
+
+  if (
+    command.includes("calculate") ||
+    command.includes("calculator") ||
+    command.includes("what is") &&
+    /[0-9].*[+\-*/×÷]/.test(command)
+  ) {
+
+    const expression = original
+      .replace(/calculate/ig, "")
+      .replace(/calculator/ig, "")
+      .replace(/what is/ig, "")
+      .replace(/equals/ig, "")
+      .replace(/equal to/ig, "")
+      .trim();
+
+    try {
+
+      const answer = calculate(expression);
+
+      respond("The answer is " + answer);
+
+    } catch (error) {
+
+      respond(
+        "I could not calculate that. Try a simple expression like 25 multiplied by 4."
+      );
+
+    }
+
+    return;
+  }
+
+  /* GOOGLE */
+
+  if (
+    command === "google" ||
+    command.includes("open google")
+  ) {
+
+    openWebsite(
+      "https://www.google.com",
+      "Google"
+    );
+
+    return;
+  }
+
+  /* YOUTUBE */
+
+  if (
+    command.includes("youtube")
+  ) {
+
+    openWebsite(
+      "https://www.youtube.com",
+      "YouTube"
+    );
+
+    return;
+  }
+
+  /* GITHUB */
+
+  if (
+    command.includes("github")
+  ) {
+
+    openWebsite(
+      "https://github.com",
+      "GitHub"
+    );
+
+    return;
+  }
+
+  /* INSTAGRAM */
+
+  if (
+    command.includes("instagram")
+  ) {
+
+    openWebsite(
+      "https://www.instagram.com",
+      "Instagram"
+    );
+
+    return;
+  }
+
+  /* FACEBOOK */
+
+  if (
+    command.includes("facebook")
+  ) {
+
+    openWebsite(
+      "https://www.facebook.com",
+      "Facebook"
+    );
+
+    return;
+  }
+
+  /* WHATSAPP */
+
+  if (
+    command.includes("whatsapp")
+  ) {
+
+    openWebsite(
+      "https://web.whatsapp.com",
+      "WhatsApp Web"
+    );
+
+    return;
+  }
+
+  /* CALCULATOR WEBSITE */
+
+  if (
+    command.includes("open calculator")
+  ) {
+
+    openWebsite(
+      "https://www.calculator.net",
+      "Calculator"
+    );
+
+    return;
+  }
+
+  /* SEARCH */
+
+  if (
+    command.startsWith("search ") ||
+    command.startsWith("google ")
+  ) {
+
+    const query = original
+      .replace(/^search /i, "")
+      .replace(/^google /i, "")
+      .trim();
+
+    googleSearch(query);
+    return;
+  }
+
+  /* JOKE */
+
+  if (
+    command.includes("joke") ||
+    command.includes("funny")
+  ) {
+
+    randomJoke();
+    return;
+  }
+
+  /* THANK YOU */
+
+  if (
+    command.includes("thank you") ||
+    command.includes("thanks")
+  ) {
+
+    respond("You're welcome. I'm ready for your next command.");
+    return;
+  }
+
+  /* HOW ARE YOU */
+
+  if (
+    command.includes("how are you")
+  ) {
+
+    respond("All systems are operational. Ready to assist you.");
+    return;
+  }
+
+  /* HELP */
+
+  if (
+    command === "help" ||
+    command.includes("what can you do")
+  ) {
+
+    respond(
+      "You can ask me for time, date, weather, location, calculations, reminders, jokes, Google searches, or to open Google, YouTube, GitHub, Instagram and WhatsApp."
+    );
+
+    return;
+  }
+
+  /* UNKNOWN COMMAND */
+
+  respond(
+    "I heard: " +
+    original +
+    ". This command is not available yet. Say Help to see my commands."
+  );
+
+}
+
+/* =========================
+   VOICE RECOGNITION
+========================= */
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+
+  recognition = new SpeechRecognition();
+
+  recognition.lang = "en-IN";
+
+  recognition.continuous = false;
+
+  recognition.interimResults = true;
+
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+
+    listening = true;
+
+    core.classList.add("listening");
+
+    document.getElementById("systemStatus").textContent =
+      "LISTENING";
+
+    setStatus("Listening... Speak now.");
+
+  };
+
+  recognition.onresult = event => {
+
+    let transcript = "";
+
+    for (
+      let i = event.resultIndex;
+      i < event.results.length;
+      i++
+    ) {
+
+      transcript += event.results[i][0].transcript;
+
+    }
+
+    input.value = transcript;
+
+    const lastResult =
+      event.results[event.results.length - 1];
+
+    if (lastResult.isFinal) {
+
+      const finalText =
+        lastResult[0].transcript.trim();
+
+      listening = false;
+
+      core.classList.remove("listening");
+
+      document.getElementById("systemStatus").textContent =
+        "SYSTEM ONLINE";
+
+      if (finalText) {
+        processCommand(finalText);
+      }
+
+    }
+
+  };
+
+  recognition.onerror = event => {
+
+    listening = false;
+
+    core.classList.remove("listening");
+
+    document.getElementById("systemStatus").textContent =
+      "SYSTEM ONLINE";
+
+    const errors = {
+
+      "not-allowed":
+        "Microphone permission denied. Open this website in Chrome and allow microphone permission.",
+
+      "service-not-allowed":
+        "Speech service is blocked by the browser.",
+
+      "no-speech":
+        "No speech detected. Please try again.",
+
+      "network":
+        "Voice recognition requires an internet connection.",
+
+      "audio-capture":
+        "No microphone was found.",
+
+      "aborted":
+        "Voice recognition stopped."
+
+    };
+
+    setStatus(
+      errors[event.error] ||
+      "Voice error: " + event.error
+    );
+
+  };
+
+  recognition.onend = () => {
+
+    listening = false;
+
+    core.classList.remove("listening");
+
+    document.getElementById("systemStatus").textContent =
+      "SYSTEM ONLINE";
+
+  };
+
+} else {
+
+  setStatus(
+    "Speech recognition is not supported by this browser."
+  );
+
+}
+
+/* =========================
+   VOICE BUTTON
+========================= */
+
+document.getElementById("voiceButton")
+  .addEventListener("click", () => {
+
+    if (!recognition) {
+
+      respond(
+        "Speech recognition is unavailable. Please use Chrome on Android."
+      );
+
+      return;
+    }
+
+    if (listening) {
+
+      recognition.stop();
+
+      setStatus("Stopping voice...");
+
+      return;
+    }
+
+    stopSpeaking();
+
+    input.value = "";
+
+    try {
+
+      recognition.start();
+
+    } catch (error) {
+
+      setStatus(
+        "Voice could not start. Try again."
+      );
+
+    }
+
+});
+
+/* =========================
+   STOP BUTTON
+========================= */
+
+document.getElementById("stopButton")
+  .addEventListener("click", () => {
+
+    stopSpeaking();
+
+    if (recognition && listening) {
+      recognition.stop();
+    }
+
+    setStatus("Voice stopped");
+
+});
+
+/* =========================
+   SEND BUTTON
+========================= */
+
+document.getElementById("sendButton")
+  .addEventListener("click", () => {
+
+    processCommand(input.value);
+
+});
+
+/* ENTER KEY */
+
+input.addEventListener("keydown", event => {
+
+  if (event.key === "Enter") {
+
+    processCommand(input.value);
+
+  }
+
+});
+
+/* =========================
+   QUICK COMMANDS
+========================= */
+
+document.querySelectorAll("[data-command]")
+  .forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      processCommand(button.dataset.command);
+
+    });
+
+});
+
+/* =========================
+   CLEAR CHAT
+========================= */
+
+document.getElementById("clearChat")
+  .addEventListener("click", () => {
+
+    chatHistory = [];
+
+    localStorage.removeItem("jarvis_history");
+
+    renderChat();
+
+    responseBox.textContent =
+      "Conversation cleared. Jarvis is ready.";
+
+    setStatus("Ready");
+
+});
+
+/* =========================
+   STARTUP
+========================= */
+
+setStatus("System ready");
+
+</script>
+
+</body>
+</html>
